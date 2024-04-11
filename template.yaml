@@ -18,7 +18,7 @@ Parameters:
     Default: "t3.small" 
 
   EFSVolumeSize:
-    Description: Tamaño del volumen EFS para almacenamiento de embeddings
+    Description: Tama?o del volumen EFS para almacenamiento de embeddings
     Type: Number
     Default: 50 
 
@@ -50,6 +50,35 @@ Resources:
           Value: "Dev"
         - Key: Area
           Value: "Call Center"
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "MyInternetGateway"
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: "PublicRouteTable"
+
+  InternetRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
 
   DefaultSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -252,7 +281,7 @@ Resources:
           - !Ref SUPR1
           - !Ref SUPR3
         SecurityGroupIds:
-          - !GetAtt VPC.DefaultSecurityGroup
+          - !GetAtt DefaultSecurityGroup.GroupId
       Tags:
         - Key: Name
           Value: "AERONEXGAWSDEVEKSCEAST201"
@@ -303,7 +332,7 @@ Resources:
               - eks:ListClusters
               - eks:ListFargateProfiles
               - eks:ListNodegroups
-            Resource: "*" #Modify the following line with the ARN of your specific EKS resource. For example: arn:aws:eks:us-east-1:123456789012:cluster/my-cluster-name
+            Resource: "*"
       Roles:
         - !Ref EKSRole
 
@@ -319,9 +348,9 @@ Resources:
             Action:
               - rds:CreateDBCluster
               - rds:CreateDBInstance
-              - rds:DescribeDBClustersm
+              - rds:DescribeDBClusters
               - rds:DescribeDBInstances
-            Resource: "*" # Modify the following line with the ARN of your specific RDS resource. For example: "arn:aws:rds:us-east-1:123456789012:db:mydatabase"
+            Resource: "*"
       Roles:
         - !Ref EKSRole
  
@@ -358,7 +387,6 @@ Resources:
       Roles:
         - !Ref EKSRole
 
-
 Outputs:
   VpcId:
     Description: >
@@ -381,5 +409,3 @@ Outputs:
       - EFSPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${EFSPolicy}"
       - OpenSearchPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${OpenSearchPolicy}"
     Value: !Ref VPC
-
-      
