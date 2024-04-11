@@ -41,7 +41,7 @@ Resources:
         - Key: Area
           Value: "Call Center"
 
-  SGR:
+  DefaultSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Default security group for EFS Mount Target
@@ -240,7 +240,7 @@ Resources:
           - !Ref SUPR1
           - !Ref SUPR3
         SecurityGroupIds:
-          - !GetAtt VPC.SGR
+          - !GetAtt VPC.DefaultSecurityGroup
       Tags:
         - Key: Name
           Value: "MyEKSCluster"
