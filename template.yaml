@@ -222,7 +222,9 @@ Resources:
             Resource: "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/my-opensearch-nw/*"
       Tags:
         - Key: Name
-          Value: "ElasticsearchDomain"
+          Value: "AERONEXGAWSDEVESDEAST201"
+        - Key: Description
+          Value: "ESD NextGenCC"
         - Key: Project
           Value: "NextGenCC"
         - Key: Environment
@@ -243,7 +245,9 @@ Resources:
           - !GetAtt VPC.DefaultSecurityGroup
       Tags:
         - Key: Name
-          Value: "MyEKSCluster"
+          Value: "AERONEXGAWSDEVEKSCEAST201"
+        - Key: Description
+          Value: "EKSC NextGenCC"
         - Key: Project
           Value: "NextGenCC"
         - Key: Environment
@@ -266,7 +270,9 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
       Tags:
         - Key: Name
-          Value: "EKSRole"
+          Value: "AERONEXGAWSDEVEKSREAST201"
+        - Key: Description
+          Value: "EKSR NextGenCC"
         - Key: Project
           Value: "NextGenCC"
         - Key: Environment
