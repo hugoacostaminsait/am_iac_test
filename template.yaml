@@ -18,19 +18,9 @@ Parameters:
     Default: "t3.small" 
 
   EFSVolumeSize:
-    Description: Tama?o del volumen EFS para almacenamiento de embeddings
+    Description: Tamaño del volumen EFS para almacenamiento de embeddings
     Type: Number
     Default: 50 
-
-  BucketName:
-    Type: String
-    Description: Nombre del bucket de S3
-    Default: my-s3-bucket
-
-  FlowName:
-    Type: String
-    Description: Nombre del flujo de AppFlow
-    Default: my-appflow-flow
 
 Resources:
   VPC:
@@ -50,35 +40,6 @@ Resources:
           Value: "Dev"
         - Key: Area
           Value: "Call Center"
-
-  InternetGateway:
-    Type: AWS::EC2::InternetGateway
-    Properties:
-      Tags:
-        - Key: Name
-          Value: "MyInternetGateway"
-
-  VPCGatewayAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      VpcId: !Ref VPC
-      InternetGatewayId: !Ref InternetGateway
-
-  PublicRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: "PublicRouteTable"
-
-  InternetRoute:
-    Type: AWS::EC2::Route
-    DependsOn: VPCGatewayAttachment
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
 
   DefaultSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -281,7 +242,7 @@ Resources:
           - !Ref SUPR1
           - !Ref SUPR3
         SecurityGroupIds:
-          - !GetAtt DefaultSecurityGroup.GroupId
+          - !GetAtt VPC.DefaultSecurityGroup
       Tags:
         - Key: Name
           Value: "AERONEXGAWSDEVEKSCEAST201"
@@ -387,6 +348,11 @@ Resources:
       Roles:
         - !Ref EKSRole
 
+  EmbeddingsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: my-embeddings-bucket # Puedes cambiar el nombre del bucket según tus necesidades
+
 Outputs:
   VpcId:
     Description: >
@@ -408,4 +374,5 @@ Outputs:
       - RDSPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${RDSPolicy}"
       - EFSPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${EFSPolicy}"
       - OpenSearchPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${OpenSearchPolicy}"
+      - EmbeddingsBucket: !Ref EmbeddingsBucket
     Value: !Ref VPC
