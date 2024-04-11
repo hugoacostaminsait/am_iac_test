@@ -13,8 +13,11 @@ Below are the steps to create an IAM user using the CLI:
 Here's a summary of the main features and resources created:
 
 VPC (Virtual Private Cloud): Creates a virtual network in the specified region with defined CIDR blocks. Also configures DNS.
+
 Security Groups (SGR): Defines a security group for EFS Mount Target.
+
 Subnets (SUPR1, SUPR2, SUPR3, SUPR4): Creates four subnets in different availability zones to distribute resources.
+
 EFS FileSystem: Creates an elastic file system for storing data.
 EFS MountTarget: Creates a mount point for EFS in one of the subnets.
 DBSubnetGroup: Creates a subnet group for Aurora DB.

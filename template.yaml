@@ -347,7 +347,6 @@ Outputs:
   VpcId:
     Description: >
       - VPC: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/${VPC}"
-      
       - DefaultSecurityGroup: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/${DefaultSecurityGroup}"
       - SUPR1: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SUPR1}"
       - SUPR2: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SUPR2}"
