@@ -151,7 +151,7 @@ Resources:
       FileSystemId: !Ref EFSFileSystem
       SubnetId: !Ref SUPR3
       SecurityGroups: 
-        - !Ref SGR
+        - !Ref DefaultSecurityGroup
 
 
   DBSubnetGroup:
