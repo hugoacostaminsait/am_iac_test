@@ -10,6 +10,7 @@ Below are the steps to create an IAM user using the CLI:
 4. Finally, you can generate access credentials for the newly created user using the following command:
       ### `aws iam create-access-key --user-name amdev`
 
+
 Here's a summary of the main features and resources created:
 
 -VPC (Virtual Private Cloud): Creates a virtual network in the specified region with defined CIDR blocks. Also configures DNS.
@@ -32,5 +33,9 @@ Here's a summary of the main features and resources created:
 
 -IAM Roles and Policies (EKSRole, EKSPolicy, RDSPolicy, EFSPolicy, OpenSearchPolicy): Configures IAM roles and policies to provide permissions to the created resources.
 
+
+![alt text](application-composer-amv1.yaml.png)
+
 To use this template, you can copy and paste the code into a file with the extension .yaml or .json and then deploy it using AWS CloudFormation. Make sure to review and customize the parameters and tags as necessary for your specific environment. Additionally, you can use the outputs provided to get the ARNs of the created resources after deployment.
+
 

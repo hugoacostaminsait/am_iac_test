@@ -22,6 +22,16 @@ Parameters:
     Type: Number
     Default: 50 
 
+  BucketName:
+    Type: String
+    Description: Nombre del bucket de S3
+    Default: my-s3-bucket
+
+  FlowName:
+    Type: String
+    Description: Nombre del flujo de AppFlow
+    Default: my-appflow-flow
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -293,7 +303,7 @@ Resources:
               - eks:ListClusters
               - eks:ListFargateProfiles
               - eks:ListNodegroups
-            Resource: "*"
+            Resource: "*" #Modify the following line with the ARN of your specific EKS resource. For example: arn:aws:eks:us-east-1:123456789012:cluster/my-cluster-name
       Roles:
         - !Ref EKSRole
 
@@ -309,9 +319,9 @@ Resources:
             Action:
               - rds:CreateDBCluster
               - rds:CreateDBInstance
-              - rds:DescribeDBClusters
+              - rds:DescribeDBClustersm
               - rds:DescribeDBInstances
-            Resource: "*"
+            Resource: "*" # Modify the following line with the ARN of your specific RDS resource. For example: "arn:aws:rds:us-east-1:123456789012:db:mydatabase"
       Roles:
         - !Ref EKSRole
  
