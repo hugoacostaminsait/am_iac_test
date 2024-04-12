@@ -348,18 +348,10 @@ Resources:
       Roles:
         - !Ref EKSRole
 
-  MyPod:
-    Type: AWS::EKS::Nodegroup
+  EmbeddingsBucket:
+    Type: AWS::S3::Bucket
     Properties:
-      ClusterName: !Ref MyEKSCluster
-      NodegroupName: embeddings-pod
-      Subnets:
-        - !Ref SUPR1
-        - !Ref SUPR3
-      ScalingConfig:
-        MinSize: 1
-        MaxSize: 5
-        DesiredSize: 2
+      BucketName: my-embeddings-bucket # Puedes cambiar el nombre del bucket según tus necesidades
 
 Outputs:
   VpcId:
