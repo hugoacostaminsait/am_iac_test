@@ -1,7 +1,12 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: >
+AWSTemplateFormatVersion: "2010-09-09"
+Description: 
   AMAWSDEVUE101
 Parameters:
+  DeveloperUserName:
+    Description: "Username for the developer IAM user"
+    Type: "String"
+    Default: "developer"
+
   VpcCIDR:
     Description: CIDR block para la VPC
     Type: String
@@ -23,6 +28,48 @@ Parameters:
     Default: 50 
 
 Resources:
+  DeveloperUser:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: !Ref DeveloperUserName
+
+  DeveloperUserPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action: 
+              - "s3:*"
+              - "cloudformation:*"
+              - "es:*"
+              - "ec2:Describe*"
+              - "ec2:CreateTags"
+              - "ec2:CreateSecurityGroup"
+              - "ec2:AuthorizeSecurityGroupIngress"
+              - "ec2:AuthorizeSecurityGroupEgress"
+              - "ec2:DeleteSecurityGroup"
+              - "ec2:RevokeSecurityGroupIngress"
+              - "ec2:RevokeSecurityGroupEgress"
+              - "ec2:CreateSubnet"
+              - "ec2:DeleteSubnet"
+              - "ec2:AssociateRouteTable"
+              - "ec2:DisassociateRouteTable"
+              - "ec2:CreateRoute"
+              - "ec2:DeleteRoute"
+              - "ec2:CreateInternetGateway"
+              - "ec2:AttachInternetGateway"
+              - "ec2:DetachInternetGateway"
+              - "ec2:CreateVpc"
+              - "ec2:DeleteVpc"
+              - "rds:*"
+              - "elasticfilesystem:*"
+              - "eks:*"
+            Resource: "*"
+      Users:
+        - !Ref DeveloperUser
+
   CloudFormationRole:
     Type: AWS::IAM::Role
     Properties:
@@ -373,6 +420,12 @@ Resources:
       BucketName: my-embeddings-bucket # Puedes cambiar el nombre del bucket según tus necesidades
 
 Outputs:
+  DeveloperUserName:
+    Description: "Username of the developer IAM user"
+    Value: !Ref DeveloperUser
+    Export:
+      Name: !Sub "${AWS::StackName}-DeveloperUserName"
+
   VpcId:
     Description: >
       - VPC: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/${VPC}"
