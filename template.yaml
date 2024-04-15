@@ -1,29 +1,30 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: 
-  AMAWSDEVUE101
+  AMAWSDEVUE101 
+
 Parameters:
   DeveloperUserName:
-    Description: "Username for the developer IAM user"
+    Description: "Usuario IAM del desarrollador"
     Type: "String"
     Default: "developer"
 
   VpcCIDR:
-    Description: CIDR block para la VPC
+    Description: "Bloque CIDR para la VPC"
     Type: String
     Default: "10.0.0.0/16"
   
   AuroraDBInstanceType:
-    Description: Tipo de instancia para Aurora PostgreSQL
+    Description: "Tipo de instancia para Aurora PostgreSQL"
     Type: String
     Default: "db.t3.medium"
     
   OpenSearchInstanceType:
-    Description: Tipo de instancia para OpenSearch
+    Description: "Tipo de instancia para OpenSearch"
     Type: String
     Default: "t3.small" 
 
   EFSVolumeSize:
-    Description: Tamaño del volumen EFS para almacenamiento de embeddings
+    Description: "Tamaño del volumen EFS para almacenamiento de embeddings"
     Type: Number
     Default: 50 
 
@@ -41,8 +42,15 @@ Resources:
         Statement:
           - Effect: "Allow"
             Action: 
-              - "s3:*"
-              - "cloudformation:*"
+              - "s3:ListBucket"
+              - "s3:GetObject"
+              - "s3:PutObject"
+              - "s3:DeleteObject"
+              - "cloudformation:DescribeStacks"
+              - "cloudformation:DescribeStackEvents"
+              - "cloudformation:DescribeStackResource"
+              - "cloudformation:DescribeStackResources"
+              - "cloudformation:ListStacks"
               - "es:*"
               - "ec2:Describe*"
               - "ec2:CreateTags"
@@ -65,7 +73,10 @@ Resources:
               - "ec2:DeleteVpc"
               - "rds:*"
               - "elasticfilesystem:*"
-              - "eks:*"
+              - "eks:DescribeCluster"
+              - "eks:ListClusters"
+              - "eks:ListFargateProfiles"
+              - "eks:ListNodegroups"
             Resource: "*"
       Users:
         - !Ref DeveloperUser
@@ -219,7 +230,6 @@ Resources:
       SecurityGroups: 
         - !Ref DefaultSecurityGroup
 
-
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
@@ -363,7 +373,6 @@ Resources:
       Roles:
         - !Ref EKSRole
 
-
   RDSPolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -421,7 +430,7 @@ Resources:
 
 Outputs:
   DeveloperUserName:
-    Description: "Username of the developer IAM user"
+    Description: "Nombre de usuario del usuario IAM del desarrollador"
     Value: !Ref DeveloperUser
     Export:
       Name: !Sub "${AWS::StackName}-DeveloperUserName"

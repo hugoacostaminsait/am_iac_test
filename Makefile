@@ -2,7 +2,7 @@
 
 # Variables
 STACK_NAME= amv1
-TEMPLATE_FILE=cloudformation-template.yml
+TEMPLATE_FILE=template.yml
 AWS_REGION=us-east-1
 
 # Reglas
