@@ -2,7 +2,7 @@
 	"Version": "2012-10-17",
 	"Statement": [
 		{
-			"Sid": "IAMpolyci",
+			"Sid": "IAMpolicy",
 			"Effect": "Allow",
 			"Action": [
 				"iam:CreateRole",
@@ -23,9 +23,9 @@
 				"ec2:CreateSubnet",
 				"ec2:DescribeSubnets",
 				"elasticfilesystem:DeleteFileSystem",
-				"elasticfilesystem:CreateFileSystem",
-				"es:DeleteDomain",
 				"rds:DescribeDBSubnetGroups",
+				"es:DeleteDomain",
+				"elasticfilesystem:CreateFileSystem",
 				"iam:TagRole",
 				"ec2:CreateVpc",
 				"es:CreateElasticsearchDomain",
