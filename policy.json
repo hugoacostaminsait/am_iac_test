@@ -2,29 +2,31 @@
 	"Version": "2012-10-17",
 	"Statement": [
 		{
-			"Sid": "EFSEC2POLICY",
+			"Sid": "VisualEditor0",
 			"Effect": "Allow",
 			"Action": [
-				"es:DescribeElasticsearchDomain",
 				"elasticfilesystem:CreateMountTarget",
+				"es:DescribeElasticsearchDomain",
 				"ec2:CreateSecurityGroup",
 				"ec2:CreateTags",
+				"ec2:DeleteSecurityGroup",
 				"ec2:CreateVpc",
 				"es:DescribeDomain",
 				"ec2:ModifyVpcAttribute",
+				"elasticfilesystem:DescribeFileSystems",
 				"ec2:CreateSubnet",
-				"elasticfilesystem:DescribeFileSystems"
+				"elasticfilesystem:DeleteFileSystem"
 			],
 			"Resource": [
+				"arn:aws:elasticfilesystem:us-east-1:590183872451:file-system/fs-1234567890abcdef0",
 				"arn:aws:ec2:*:590183872451:subnet/*",
 				"arn:aws:ec2:*:590183872451:security-group/*",
 				"arn:aws:ec2:*:590183872451:vpc/*",
-				"arn:aws:es:us-east-1:590183872451:domain/my-opensearch-nw",
-				"arn:aws:elasticfilesystem:us-east-1:590183872451:file-system/fs-1234567890abcdef0"
+				"arn:aws:es:us-east-1:590183872451:domain/my-opensearch-nw"
 			]
 		},
 		{
-			"Sid": "IAMPOLICY",
+			"Sid": "VisualEditor1",
 			"Effect": "Allow",
 			"Action": [
 				"iam:GetRole",
@@ -35,11 +37,13 @@
 				"iam:AttachRolePolicy",
 				"ec2:DescribeSecurityGroups",
 				"elasticfilesystem:TagResource",
+				"iam:DetachRolePolicy",
 				"iam:CreateServiceLinkedRole",
 				"elasticfilesystem:CreateMountTarget",
-				"cloudformation:CreateStack",
 				"ec2:DescribeAvailabilityZones",
+				"cloudformation:CreateStack",
 				"ec2:DescribeVpcs",
+				"iam:DeleteServiceLinkedRole",
 				"elasticfilesystem:DescribeFileSystems",
 				"ec2:DescribeSubnets"
 			],
