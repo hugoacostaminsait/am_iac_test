@@ -2,38 +2,14 @@
 	"Version": "2012-10-17",
 	"Statement": [
 		{
-			"Sid": "EFSEC2policy",
+			"Sid": "IAMpolicy",
 			"Effect": "Allow",
 			"Action": [
 				"es:DeleteDomain",
-				"ec2:CreateTags",
-				"ec2:CreateVpc",
-				"es:DescribeElasticsearchDomain",
-				"es:DeleteElasticsearchDomain",
-				"elasticfilesystem:CreateMountTarget",
-				"ec2:CreateSecurityGroup",
-				"ec2:DeleteSecurityGroup",
-				"es:DescribeDomain",
-				"ec2:ModifyVpcAttribute",
-				"ec2:CreateSubnet",
-				"elasticfilesystem:DescribeFileSystems",
-				"elasticfilesystem:DeleteFileSystem"
-			],
-			"Resource": [
-				"arn:aws:ec2:*:590183872451:subnet/*",
-				"arn:aws:ec2:*:590183872451:security-group/*",
-				"arn:aws:ec2:*:590183872451:vpc/*",
-				"arn:aws:es:us-east-1:590183872451:domain/my-opensearch-nw",
-				"arn:aws:elasticfilesystem:us-east-1:590183872451:file-system/fs-1234567890abcdef0"
-			]
-		},
-		{
-			"Sid": "policy",
-			"Effect": "Allow",
-			"Action": [
 				"elasticfilesystem:CreateFileSystem",
 				"rds:DescribeDBSubnetGroups",
 				"iam:TagRole",
+				"ec2:CreateVpc",
 				"iam:CreateRole",
 				"es:CreateElasticsearchDomain",
 				"iam:AttachRolePolicy",
@@ -42,12 +18,19 @@
 				"es:AddTags",
 				"iam:GetServiceLinkedRoleDeletionStatus",
 				"iam:DetachRolePolicy",
+				"es:DescribeElasticsearchDomain",
+				"es:DeleteElasticsearchDomain",
 				"ec2:DescribeAvailabilityZones",
 				"iam:DeleteRolePolicy",
+				"ec2:CreateSecurityGroup",
+				"es:DescribeDomain",
+				"ec2:ModifyVpcAttribute",
 				"elasticfilesystem:DescribeFileSystems",
 				"rds:AddTagsToResource",
 				"iam:GetRole",
+				"elasticfilesystem:DescribeMountTargets",
 				"s3:*",
+				"ec2:CreateTags",
 				"iam:DeleteRole",
 				"ec2:DescribeSecurityGroups",
 				"elasticfilesystem:TagResource",
@@ -56,8 +39,12 @@
 				"elasticfilesystem:CreateMountTarget",
 				"cloudformation:CreateStack",
 				"ec2:DescribeVpcs",
+				"ec2:DeleteSecurityGroup",
 				"iam:DeleteServiceLinkedRole",
-				"ec2:DescribeSubnets"
+				"iam:GetUser",
+				"ec2:CreateSubnet",
+				"ec2:DescribeSubnets",
+				"elasticfilesystem:DeleteFileSystem"
 			],
 			"Resource": "*"
 		}
