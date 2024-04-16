@@ -5,9 +5,11 @@ Below are the steps to create an IAM user using the CLI:
 1. Open your terminal or command line.
 2. Execute the following command to create a new IAM user:
       ### `aws iam create-user --user-name amdev`
-3. Add permissions for the created user:
-      ### `aws iam attach-user-policy --user-name amdev --policy-arn arn:aws:iam::aws:policy AdministratorAccess`
-4. Finally, you can generate access credentials for the newly created user using the following command:
+3. Generate policies by naming them (policy.json) and specifying permissions in the JSON file.
+      ### `aws iam create-policy --policy-name FullAccessPolicy --policy-document file://C:\Users\jjimenezz\Documents\GitHub\am_iac_test\policy.json`
+4.  Add permissions for the created user:
+      ### `aws iam attach-user-policy --user-name amdev --policy-arn arn:aws:iam::590183872451:policy/FullAccessPolicy`
+5. Finally, you can generate access credentials for the newly created user using the following command:
       ### `aws iam create-access-key --user-name amdev`
 
 

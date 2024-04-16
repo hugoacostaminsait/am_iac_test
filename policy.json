@@ -1,0 +1,28 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "policy",
+			"Effect": "Allow",
+			"Action": [
+				"iam:GetRole",
+				"s3:*",
+				"elasticfilesystem:CreateFileSystem",
+				"ec2:CreateTags",
+				"iam:TagRole",
+				"ec2:CreateVpc",
+				"iam:CreateRole",
+				"iam:AttachRolePolicy",
+				"elasticfilesystem:TagResource",
+				"iam:CreateServiceLinkedRole",
+				"cloudformation:CreateStack",
+				"ec2:DescribeAvailabilityZones",
+				"ec2:DescribeVpcs",
+				"ec2:ModifyVpcAttribute",
+				"elasticfilesystem:DescribeFileSystems",
+				"ec2:DescribeSubnets"
+			],
+			"Resource": "*"
+		}
+	]
+}

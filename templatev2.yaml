@@ -1,12 +1,11 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: 
-  AMAWSDEVUE101 
+Description: "AMAWSDEVUE101"
 
 Parameters:
   DeveloperUserName:
     Description: "Usuario IAM del desarrollador"
     Type: "String"
-    Default: "developer"
+    Default: "jessica"  # Cambiado el valor por defecto por el usuario
 
   VpcCIDR:
     Description: "Bloque CIDR para la VPC"
@@ -29,11 +28,6 @@ Parameters:
     Default: 50 
 
 Resources:
-  DeveloperUser:
-    Type: "AWS::IAM::User"
-    Properties:
-      UserName: !Ref DeveloperUserName
-
   CloudFormationRole:
     Type: AWS::IAM::Role
     Properties:
@@ -52,6 +46,32 @@ Resources:
               - Effect: Allow
                 Action: '*'
                 Resource: '*'
+
+  CloudFormationPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CloudFormationPermissions
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - cloudformation:CreateStack
+              - cloudformation:UpdateStack
+              - cloudformation:DeleteStack
+              - cloudformation:DescribeStacks
+              - cloudformation:DescribeStackEvents
+              - cloudformation:DescribeStackResource
+              - cloudformation:DescribeStackResources
+              - cloudformation:GetTemplate
+              - cloudformation:SetStackPolicy
+              - cloudformation:ValidateTemplate
+              - elasticfilesystem:TagResource
+            Resource: "*"
+      Roles:
+        - !Ref CloudFormationRole
+      Users:
+        - !Ref DeveloperUserName
 
   VPC:
     Type: AWS::EC2::VPC
@@ -361,18 +381,27 @@ Resources:
       Roles:
         - !Ref EKSRole
 
+
+  OpenSearchPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: OpenSearchPermissions
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - es:*
+            Resource: "*"
+      Roles:
+        - !Ref EKSRole
+
   EmbeddingsBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: my-embeddings-bucket # Puedes cambiar el nombre del bucket según tus necesidades
 
 Outputs:
-  DeveloperUserName:
-    Description: "Nombre de usuario del usuario IAM del desarrollador"
-    Value: !Ref DeveloperUser
-    Export:
-      Name: !Sub "${AWS::StackName}-DeveloperUserName"
-
   VpcId:
     Description: >
       - VPC: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/${VPC}"
@@ -392,5 +421,6 @@ Outputs:
       - EKSPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${EKSPolicy}"
       - RDSPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${RDSPolicy}"
       - EFSPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${EFSPolicy}"
+      - OpenSearchPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${OpenSearchPolicy}"
       - EmbeddingsBucket: !Ref EmbeddingsBucket
     Value: !Ref VPC
