@@ -3,6 +3,7 @@ Description:
   AMAWSDEVUE101 
 
 Parameters:
+
   VpcCIDR:
     Description: "Bloque CIDR para la VPC"
     Type: String
@@ -19,7 +20,7 @@ Parameters:
     Default: "t3.small" 
 
   EFSVolumeSize:
-    Description: "Tamaño del volumen EFS para almacenamiento de embeddings"
+    Description: "Tama?o del volumen EFS para almacenamiento de embeddings"
     Type: Number
     Default: 50 
 
@@ -42,6 +43,22 @@ Resources:
         - Key: Area
           Value: "Call Center"
 
+  DefaultSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Default security group for EFS Mount Target
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVSGREAST201"
+        - Key: Description
+          Value: "SGR NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   SUPR1:
     Type: AWS::EC2::Subnet
@@ -115,8 +132,231 @@ Resources:
         - Key: Area
           Value: "Call Center"
 
+  EFSFileSystem:
+    Type: "AWS::EFS::FileSystem"
+    Properties:
+      FileSystemTags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVEFSEAST201"
+        - Key: Description
+          Value: "EFS NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
+
+  EFSMountTarget:
+    Type: "AWS::EFS::MountTarget"
+    Properties:
+      FileSystemId: !Ref EFSFileSystem
+      SubnetId: !Ref SUPR3
+      SecurityGroups: 
+        - !Ref DefaultSecurityGroup
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: "Subnet group for Aurora DB"
+      SubnetIds:
+        - !Ref SUPR1
+        - !Ref SUPR2
+        - !Ref SUPR3
+        - !Ref SUPR4
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVDBSGEAST201"
+        - Key: Description
+          Value: "DBSG NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
+
+  AuroraDBCluster:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      Engine: aurora-postgresql
+      MasterUsername: masteruser
+      MasterUserPassword: masterpassword
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVADBCEAST201"
+        - Key: Description
+          Value: "ADBC NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
+
+  OpenSearchServiceLinkedRole:
+    Type: "AWS::IAM::ServiceLinkedRole"
+    Properties:
+      AWSServiceName: "es.amazonaws.com"
+      Description: "Service linked role for Amazon OpenSearch Service"
+
+  ElasticsearchDomain:
+    Type: AWS::OpenSearchService::Domain
+    Properties:
+      DomainName: my-opensearch-nw
+      NodeToNodeEncryptionOptions:
+        Enabled: true
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 10
+      VPCOptions:
+        SubnetIds:
+          - !Ref SUPR3
+      AccessPolicies: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: "*"
+            Action: "es:*"
+            Resource: "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/my-opensearch-nw/*"
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVESDEAST201"
+        - Key: Description
+          Value: "ESD NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
+
+  MyEKSCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Name: MyEKSCluster
+      RoleArn: !GetAtt EKSRole.Arn
+      ResourcesVpcConfig:
+        SubnetIds:
+          - !Ref SUPR1
+          - !Ref SUPR3
+        SecurityGroupIds:
+          - !GetAtt VPC.DefaultSecurityGroup
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVEKSCEAST201"
+        - Key: Description
+          Value: "EKSC NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
+
+  EKSRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: eks.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVEKSREAST201"
+        - Key: Description
+          Value: "EKSR NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
+
+  EKSPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: EKSPermissions
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - eks:DescribeCluster
+              - eks:ListClusters
+              - eks:ListFargateProfiles
+              - eks:ListNodegroups
+            Resource: "*"
+      Roles:
+        - !Ref EKSRole
+
+  RDSPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: RDSPermissions
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - rds:CreateDBCluster
+              - rds:CreateDBInstance
+              - rds:DescribeDBClusters
+              - rds:DescribeDBInstances
+            Resource: "*"
+      Roles:
+        - !Ref EKSRole
+ 
+
+  EFSPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: EFSPermissions
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - elasticfilesystem:CreateFileSystem
+              - elasticfilesystem:CreateMountTarget
+              - elasticfilesystem:DescribeFileSystems
+              - elasticfilesystem:DescribeMountTargets
+            Resource: "*"
+      Roles:
+        - !Ref EKSRole
+
+  EmbeddingsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: my-embeddings-bucket # Puedes cambiar el nombre del bucket seg?n tus necesidades
+
 Outputs:
   VpcId:
     Description: >
       - VPC: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/${VPC}"
+      - DefaultSecurityGroup: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/${DefaultSecurityGroup}"
+      - SUPR1: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SUPR1}"
+      - SUPR2: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SUPR2}"
+      - SUPR3: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SUPR3}"
+      - SUPR4: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SUPR4}"
+      - EFSFileSystem: !Sub "arn:aws:elasticfilesystem:${AWS::Region}:${AWS::AccountId}:file-system/${EFSFileSystem}"
+      - EFSMountTarget: !Sub "arn:aws:elasticfilesystem:${AWS::Region}:${AWS::AccountId}:mount-target/${EFSMountTarget}"
+      - DBSubnetGroup: !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:subgrp:${DBSubnetGroup}"
+      - AuroraDBCluster: !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${AuroraDBCluster}"
+      - OpenSearchServiceLinkedRole: !Sub "arn:aws:iam::${AWS::AccountId}:role/service-role/${OpenSearchServiceLinkedRole}"
+      - ElasticsearchDomain: !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/my-opensearch-nw"
+      - MyEKSCluster: !Sub "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/${MyEKSCluster}"
+      - EKSRole: !Sub "arn:aws:iam::${AWS::AccountId}:role/${EKSRole}"
+      - EKSPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${EKSPolicy}"
+      - RDSPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${RDSPolicy}"
+      - EFSPolicy: !Sub "arn:aws:iam::${AWS::AccountId}:policy/${EFSPolicy}"
+      - EmbeddingsBucket: !Ref EmbeddingsBucket
     Value: !Ref VPC
