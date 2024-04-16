@@ -2,7 +2,7 @@
 	"Version": "2012-10-17",
 	"Statement": [
 		{
-			"Sid": "VisualEditor0",
+			"Sid": "EFSEC2POLICY",
 			"Effect": "Allow",
 			"Action": [
 				"es:DescribeElasticsearchDomain",
@@ -24,7 +24,7 @@
 			]
 		},
 		{
-			"Sid": "VisualEditor1",
+			"Sid": "IAMPOLICY",
 			"Effect": "Allow",
 			"Action": [
 				"iam:GetRole",
