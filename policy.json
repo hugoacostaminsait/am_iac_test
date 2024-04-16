@@ -2,23 +2,44 @@
 	"Version": "2012-10-17",
 	"Statement": [
 		{
-			"Sid": "policy",
+			"Sid": "VisualEditor0",
+			"Effect": "Allow",
+			"Action": [
+				"es:DescribeElasticsearchDomain",
+				"elasticfilesystem:CreateMountTarget",
+				"ec2:CreateSecurityGroup",
+				"ec2:CreateTags",
+				"ec2:CreateVpc",
+				"es:DescribeDomain",
+				"ec2:ModifyVpcAttribute",
+				"ec2:CreateSubnet",
+				"elasticfilesystem:DescribeFileSystems"
+			],
+			"Resource": [
+				"arn:aws:ec2:*:590183872451:subnet/*",
+				"arn:aws:ec2:*:590183872451:security-group/*",
+				"arn:aws:ec2:*:590183872451:vpc/*",
+				"arn:aws:es:us-east-1:590183872451:domain/my-opensearch-nw",
+				"arn:aws:elasticfilesystem:us-east-1:590183872451:file-system/fs-1234567890abcdef0"
+			]
+		},
+		{
+			"Sid": "VisualEditor1",
 			"Effect": "Allow",
 			"Action": [
 				"iam:GetRole",
-				"s3:*",
 				"elasticfilesystem:CreateFileSystem",
-				"ec2:CreateTags",
+				"s3:*",
 				"iam:TagRole",
-				"ec2:CreateVpc",
 				"iam:CreateRole",
 				"iam:AttachRolePolicy",
+				"ec2:DescribeSecurityGroups",
 				"elasticfilesystem:TagResource",
 				"iam:CreateServiceLinkedRole",
+				"elasticfilesystem:CreateMountTarget",
 				"cloudformation:CreateStack",
 				"ec2:DescribeAvailabilityZones",
 				"ec2:DescribeVpcs",
-				"ec2:ModifyVpcAttribute",
 				"elasticfilesystem:DescribeFileSystems",
 				"ec2:DescribeSubnets"
 			],

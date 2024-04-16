@@ -2,11 +2,6 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "AMAWSDEVUE101"
 
 Parameters:
-  DeveloperUserName:
-    Description: "Usuario IAM del desarrollador"
-    Type: "String"
-    Default: "jessica"  # Cambiado el valor por defecto por el usuario
-
   VpcCIDR:
     Description: "Bloque CIDR para la VPC"
     Type: String
@@ -46,32 +41,6 @@ Resources:
               - Effect: Allow
                 Action: '*'
                 Resource: '*'
-
-  CloudFormationPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: CloudFormationPermissions
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Action:
-              - cloudformation:CreateStack
-              - cloudformation:UpdateStack
-              - cloudformation:DeleteStack
-              - cloudformation:DescribeStacks
-              - cloudformation:DescribeStackEvents
-              - cloudformation:DescribeStackResource
-              - cloudformation:DescribeStackResources
-              - cloudformation:GetTemplate
-              - cloudformation:SetStackPolicy
-              - cloudformation:ValidateTemplate
-              - elasticfilesystem:TagResource
-            Resource: "*"
-      Roles:
-        - !Ref CloudFormationRole
-      Users:
-        - !Ref DeveloperUserName
 
   VPC:
     Type: AWS::EC2::VPC
