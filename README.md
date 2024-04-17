@@ -36,7 +36,7 @@ Here's a summary of the main features and resources created:
 -IAM Roles and Policies (EKSRole, EKSPolicy, RDSPolicy, EFSPolicy, OpenSearchPolicy): Configures IAM roles and policies to provide permissions to the created resources.
 
 
-![alt text](application-composer-amv1.yaml-1.png)
+![alt text](application-composer-amv2.yaml.png)
 
 To use this template, you can copy and paste the code into a file with the extension .yaml or .json and then deploy it using AWS CloudFormation. Make sure to review and customize the parameters and tags as necessary for your specific environment. Additionally, you can use the outputs provided to get the ARNs of the created resources after deployment.
 

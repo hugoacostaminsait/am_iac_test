@@ -305,7 +305,19 @@ Resources:
           Value: "Dev"
         - Key: Area
           Value: "Call Center"
-          
+
+  VpcLinkBedrock: 
+    Type: AWS::ApiGatewayV2::VpcLink
+    Properties:
+      Name: VpcLinkBedrock
+      SubnetIds:
+        - !Ref SUPR1
+        - !Ref SUPR2
+        - !Ref SUPR3
+        - !Ref SUPR4
+      SecurityGroupIds:
+        - !GetAtt DefaultSecurityGroup.GroupId  
+
 Outputs:
   VpcId:
     Description: >
