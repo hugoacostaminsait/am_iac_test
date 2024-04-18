@@ -8,6 +8,7 @@
 				"lambda:CreateFunction",
 				"lambda:GetFunction",
 				"ec2:RunInstances",
+				"apigateway:GET",
 				"iam:AddRoleToInstanceProfile",
 				"cloudformation:ValidateTemplate",
 				"lambda:TagResource",

@@ -346,23 +346,23 @@ Resources:
         - !GetAtt DefaultSecurityGroup.GroupId  
   
   BedrockLambdaENI:
-  Type: AWS::EC2::NetworkInterface
-  Properties:
-    Description: "Elastic Network Interface for BedrockLambdaFunction"
-    SubnetId: !Ref SUPR2  # Asigna la subred correcta
-    GroupSet:
-      - !Ref DefaultSecurityGroup  # Asigna el grupo de seguridad correcto
-    Tags:
-      - Key: Name
-        Value: "ENI for BedrockLambdaFunction"
-      - Key: Description
-        Value: "ENI for connecting BedrockLambdaFunction"
-      - Key: Project
-        Value: "NextGenCC"
-      - Key: Environment
-        Value: "Dev"
-      - Key: Area
-        Value: "Call Center"
+   Type: AWS::EC2::NetworkInterface
+   Properties:
+     Description: "Elastic Network Interface for BedrockLambdaFunction"
+     SubnetId: !Ref SUPR2  # Asigna la subred correcta
+     GroupSet:
+       - !Ref DefaultSecurityGroup  # Asigna el grupo de seguridad correcto
+     Tags:
+       - Key: Name
+         Value: "ENI for BedrockLambdaFunction"
+       - Key: Description
+         Value: "ENI for connecting BedrockLambdaFunction"
+       - Key: Project
+         Value: "NextGenCC"
+       - Key: Environment
+         Value: "Dev"
+       - Key: Area
+         Value: "Call Center"
 
   BedrockLambdaFunction:
     Type: AWS::Lambda::Function
