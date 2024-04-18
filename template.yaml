@@ -23,6 +23,27 @@ Parameters:
     Description: "Tamaño del volumen EFS para almacenamiento de embeddings"
     Type: Number
     Default: 50 
+
+ # New parameters for Lambda function with default values
+  BedrockLambdaHandler:
+    Description: "Handler function for the Bedrock Lambda function"
+    Type: String
+    Default: "bedrock.handler"
+
+  BedrockLambdaRuntime:
+    Description: "Runtime environment for the Bedrock Lambda function"
+    Type: String
+    Default: "python3.9"
+
+  BedrockLambdaCodeS3Bucket:
+    Description: "S3 bucket where the Bedrock Lambda code is stored"
+    Type: String
+    Default: "my-bedrock-lambda-code-bucket"  # Replace with your actual bucket name
+
+  BedrockLambdaCodeS3Key:
+    Description: "S3 key of the Bedrock Lambda code within the bucket"
+    Type: String
+    Default: "bedrock-lambda.zip"  # Replace with your actual code filename
   
 
 Resources:
@@ -317,6 +338,32 @@ Resources:
         - !Ref SUPR4
       SecurityGroupIds:
         - !GetAtt DefaultSecurityGroup.GroupId  
+
+    # New resource for Lambda function
+  BedrockLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: !Ref BedrockLambdaHandler
+      Runtime: !Ref BedrockLambdaRuntime
+      Role: !GetAtt BedrockLambdaRole.Arn  # Reference the IAM role for Lambda execution
+      Code:
+        ZipFile: |
+          def handler(event, context):
+              return "Hola mundo"
+
+  # IAM role for Lambda execution (potentially new)
+  BedrockLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+
+  
 
 Outputs:
   VpcId:
