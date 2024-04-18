@@ -7,7 +7,9 @@
 			"Action": [
 				"lambda:CreateFunction",
 				"lambda:GetFunction",
+				"lambda:TagResource",
 				"ec2:DescribeInstances",
+				"ec2:CreateNetworkInterface",
 				"s3:GetObject",
 				"iam:CreateRole",
 				"iam:AttachRolePolicy",
