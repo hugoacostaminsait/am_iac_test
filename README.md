@@ -56,3 +56,9 @@ Outputs:
 Provides the ARN identifiers of various resources created within the VPC, such as the VPC itself, security groups, subnets, database clusters, OpenSearch domains, EKS clusters, and others, which can be useful for later references or integrations with other services.
 
 This template offers a solid foundation for developing and deploying cloud infrastructure on AWS, providing the necessary resources for implementing applications and services in a development environment.
+
+
+![alt text](NextGenCC-Aerochat-Dev.png)
+
+
+
