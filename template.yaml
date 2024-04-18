@@ -24,7 +24,6 @@ Parameters:
     Type: Number
     Default: 50 
 
- # New parameters for Lambda function with default values
   BedrockLambdaHandler:
     Description: "Handler function for the Bedrock Lambda function"
     Type: String
@@ -38,13 +37,17 @@ Parameters:
   BedrockLambdaCodeS3Bucket:
     Description: "S3 bucket where the Bedrock Lambda code is stored"
     Type: String
-    Default: "my-bedrock-lambda-code-bucket"  # Replace with your actual bucket name
+    Default: "my-bedrock-lambda-code-bucket"  
 
   BedrockLambdaCodeS3Key:
     Description: "S3 key of the Bedrock Lambda code within the bucket"
     Type: String
-    Default: "bedrock-lambda.zip"  # Replace with your actual code filename
-  
+    Default: "bedrock-lambda.zip" 
+
+  Cloud9tName:
+    Type: String
+    Description: Nombre del entorno Cloud9
+    Default: MyCloud9
 
 Resources:
   VPC:
@@ -176,6 +179,7 @@ Resources:
       SubnetId: !Ref SUPR3
       SecurityGroups: 
         - !Ref DefaultSecurityGroup
+      
 
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
@@ -222,6 +226,7 @@ Resources:
     Properties:
       AWSServiceName: "es.amazonaws.com"
       Description: "Service linked role for Amazon OpenSearch Service"
+      
 
   ElasticsearchDomain:
     Type: AWS::OpenSearchService::Domain
@@ -308,6 +313,7 @@ Resources:
     Properties:
       BucketName: my-embeddings-bucket # Puedes cambiar el nombre del bucket según tus necesidades
 
+
   ElasticNetworkInterface:
     Type: AWS::EC2::NetworkInterface
     Properties:
@@ -338,8 +344,26 @@ Resources:
         - !Ref SUPR4
       SecurityGroupIds:
         - !GetAtt DefaultSecurityGroup.GroupId  
+  
+  BedrockLambdaENI:
+  Type: AWS::EC2::NetworkInterface
+  Properties:
+    Description: "Elastic Network Interface for BedrockLambdaFunction"
+    SubnetId: !Ref SUPR2  # Asigna la subred correcta
+    GroupSet:
+      - !Ref DefaultSecurityGroup  # Asigna el grupo de seguridad correcto
+    Tags:
+      - Key: Name
+        Value: "ENI for BedrockLambdaFunction"
+      - Key: Description
+        Value: "ENI for connecting BedrockLambdaFunction"
+      - Key: Project
+        Value: "NextGenCC"
+      - Key: Environment
+        Value: "Dev"
+      - Key: Area
+        Value: "Call Center"
 
-    # New resource for Lambda function
   BedrockLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -350,8 +374,12 @@ Resources:
         ZipFile: |
           def handler(event, context):
               return "Hola mundo"
+      VpcConfig:
+        SecurityGroupIds:
+         - !Ref DefaultSecurityGroup  # Asigna el grupo de seguridad correcto
+        SubnetIds:
+         - !Ref SUPR2  # Asigna la subred correcta
 
-  # IAM role for Lambda execution (potentially new)
   BedrockLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -362,9 +390,53 @@ Resources:
             Principal:
               Service: lambda.amazonaws.com
             Action: 'sts:AssumeRole'
-
   
- 
+  Cloud9InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref Cloud9Role
+
+  Cloud9Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: Cloud9Policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:CreateAssociation
+                  - ssm:DeleteAssociation
+                  - ssm:DescribeAssociation
+                  - ssm:UpdateAssociationStatus
+                Resource: '*'
+
+  Cloud9Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-09e3c47e0b22858cc  # AMI de Amazon Linux 2 (puedes cambiarlo según tus necesidades)
+      IamInstanceProfile: !Ref Cloud9InstanceProfile
+      SubnetId: !Ref SUPR4
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash -xe
+          yum update -y
+          yum install -y docker
+          service docker start
+          usermod -a -G docker ec2-user
+          reboot
+    DependsOn: Cloud9Role
+
 
 Outputs:
   VpcId:
