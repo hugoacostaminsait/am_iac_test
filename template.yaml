@@ -8,7 +8,9 @@ Parameters:
     Description: "Bloque CIDR para la VPC"
     Type: String
     Default: "10.0.0.0/16"
-  
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: "Debe ser una dirección CIDR válida (por ejemplo, 10.0.0.0/16)"
+
   AuroraDBInstanceType:
     Description: "Tipo de instancia para Aurora PostgreSQL"
     Type: String
@@ -23,8 +25,9 @@ Parameters:
     Description: "Tamaño del volumen EFS para almacenamiento de embeddings"
     Type: Number
     Default: 50 
+    MinValue: 1
+    MaxValue: 16384
 
- # New parameters for Lambda function with default values
   BedrockLambdaHandler:
     Description: "Handler function for the Bedrock Lambda function"
     Type: String
@@ -176,6 +179,17 @@ Resources:
       SubnetId: !Ref SUPR3
       SecurityGroups: 
         - !Ref DefaultSecurityGroup
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVEFSMTREAST201"
+        - Key: Description
+          Value: "EFS Mount Target NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
@@ -307,6 +321,17 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: my-embeddings-bucket # Puedes cambiar el nombre del bucket según tus necesidades
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVS3EAST201"
+        - Key: Description
+          Value: "S3 NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   ElasticNetworkInterface:
     Type: AWS::EC2::NetworkInterface
@@ -350,8 +375,18 @@ Resources:
         ZipFile: |
           def handler(event, context):
               return "Hola mundo"
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVLAMBEAST201"
+        - Key: Description
+          Value: "LAMB NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
-  # IAM role for Lambda execution (potentially new)
   BedrockLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -362,8 +397,20 @@ Resources:
             Principal:
               Service: lambda.amazonaws.com
             Action: 'sts:AssumeRole'
-
-  
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVLAMBREAST201"
+        - Key: Description
+          Value: "LAMBR NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
+ 
 
 Outputs:
   VpcId:
@@ -383,4 +430,5 @@ Outputs:
       - MyEKSCluster: !Sub "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/${MyEKSCluster}"
       - EKSRole: !Sub "arn:aws:iam::${AWS::AccountId}:role/${EKSRole}"
       - EmbeddingsBucket: !Ref EmbeddingsBucket
+      - BedrockLambdaFunction: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${BedrockLambdaFunction}"
     Value: !Ref VPC

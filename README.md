@@ -13,31 +13,46 @@ Below are the steps to create an IAM user using the CLI:
       ### `aws iam create-access-key --user-name amdev`
 
 
-Here's a summary of the main features and resources created:
+Template Description:
 
--VPC (Virtual Private Cloud): Creates a virtual network in the specified region with defined CIDR blocks. Also configures DNS.
+The template provides a basic infrastructure for an AWS cloud development environment, designed for a project named "NextGenCC" in a development ("Dev") environment focused on a call center.
 
--Security Groups (SGR): Defines a security group for EFS Mount Target.
+Parameters:
 
--Subnets (SUPR1, SUPR2, SUPR3, SUPR4): Creates four subnets in different availability zones to distribute resources.
+1. VpcCIDR: Defines the CIDR block for the VPC.
 
--EFS FileSystem: Creates an elastic file system for storing data.
+2. AuroraDBInstanceType: Specifies the instance type for Aurora PostgreSQL.
 
--EFS MountTarget: Creates a mount point for EFS in one of the subnets.
+3. OpenSearchInstanceType: Determines the instance type for OpenSearch.
 
--DBSubnetGroup: Creates a subnet group for Aurora DB.
+4. EFSVolumeSize: Indicates the size of the EFS volume for embeddings storage.
 
--AuroraDBCluster: Creates an Aurora PostgreSQL database cluster.
+5. BedrockLambdaHandler: Defines the handler function for the Bedrock Lambda function.
 
--OpenSearch Service: Creates an Amazon OpenSearch Service domain with security and storage configurations.
+6. BedrockLambdaRuntime: Specifies the runtime environment for the Bedrock Lambda function.
 
--EKS Cluster (MyEKSCluster): Creates an Amazon Elastic Kubernetes Service (EKS) cluster.
+7. BedrockLambdaCodeS3Bucket: Sets the S3 bucket where the code for the Bedrock Lambda function is stored.
 
--IAM Roles and Policies (EKSRole, EKSPolicy, RDSPolicy, EFSPolicy, OpenSearchPolicy): Configures IAM roles and policies to provide permissions to the created resources.
+8. BedrockLambdaCodeS3Key: Specifies the S3 key of the code for the Bedrock Lambda function.
 
+Resources:
 
-![alt text](application-composer-amv2.yaml.png)
+1. VPC (Virtual Private Cloud): A virtual private network to isolate resources in the cloud.
 
-To use this template, you can copy and paste the code into a file with the extension .yaml or .json and then deploy it using AWS CloudFormation. Make sure to review and customize the parameters and tags as necessary for your specific environment. Additionally, you can use the outputs provided to get the ARNs of the created resources after deployment.
+2. Security groups, subnets, and EFS mount targets: Networking and storage components within the VPC.
 
+3. Aurora database cluster: A highly available PostgreSQL database cluster.
 
+4. OpenSearch domain: An OpenSearch domain for search and analytics.
+
+5. Amazon EKS cluster: A managed Kubernetes cluster for container orchestration.
+
+6. Bedrock Lambda function: A basic Lambda function with an associated IAM role.
+
+7. IAM role and other related resources: IAM roles and policies necessary for the deployed services.
+
+Outputs:
+
+Provides the ARN identifiers of various resources created within the VPC, such as the VPC itself, security groups, subnets, database clusters, OpenSearch domains, EKS clusters, and others, which can be useful for later references or integrations with other services.
+
+This template offers a solid foundation for developing and deploying cloud infrastructure on AWS, providing the necessary resources for implementing applications and services in a development environment.
