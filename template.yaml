@@ -1,26 +1,53 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: >
-  AMAWSDEVUE101
+AWSTemplateFormatVersion: "2010-09-09"
+Description: 
+  AMAWSDEVUE101 
+
 Parameters:
+
   VpcCIDR:
-    Description: CIDR block para la VPC
+    Description: "Bloque CIDR para la VPC"
     Type: String
     Default: "10.0.0.0/16"
   
   AuroraDBInstanceType:
-    Description: Tipo de instancia para Aurora PostgreSQL
+    Description: "Tipo de instancia para Aurora PostgreSQL"
     Type: String
     Default: "db.t3.medium"
     
   OpenSearchInstanceType:
-    Description: Tipo de instancia para OpenSearch
+    Description: "Tipo de instancia para OpenSearch"
     Type: String
     Default: "t3.small" 
 
   EFSVolumeSize:
-    Description: Tamaño del volumen EFS para almacenamiento de embeddings
+    Description: "Tamaño del volumen EFS para almacenamiento de embeddings"
     Type: Number
     Default: 50 
+
+  BedrockLambdaHandler:
+    Description: "Handler function for the Bedrock Lambda function"
+    Type: String
+    Default: "bedrock.handler"
+
+  BedrockLambdaRuntime:
+    Description: "Runtime environment for the Bedrock Lambda function"
+    Type: String
+    Default: "python3.9"
+
+  BedrockLambdaCodeS3Bucket:
+    Description: "S3 bucket where the Bedrock Lambda code is stored"
+    Type: String
+    Default: "my-bedrock-lambda-code-bucket"  
+
+  BedrockLambdaCodeS3Key:
+    Description: "S3 key of the Bedrock Lambda code within the bucket"
+    Type: String
+    Default: "bedrock-lambda.zip" 
+
+  Cloud9tName:
+    Type: String
+    Description: Nombre del entorno Cloud9
+    Default: MyCloud9
 
 Resources:
   VPC:
@@ -31,13 +58,32 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: "VPC"
+          Value: "AERONEXGAWSDEVVPCEAST201"
+        - Key: Description
+          Value: "VPC NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   DefaultSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Default security group for EFS Mount Target
       VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVSGREAST201"
+        - Key: Description
+          Value: "SGR NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   SUPR1:
     Type: AWS::EC2::Subnet
@@ -47,7 +93,15 @@ Resources:
       CidrBlock: !Select [0, !Cidr [!Ref VpcCIDR, 4, 4]]
       Tags:
         - Key: Name
-          Value: "SUPR1"
+          Value: "AERONEXGAWSDEVSUPREAST201"
+        - Key: Description
+          Value: "SUPR1 NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   SUPR2:
     Type: AWS::EC2::Subnet
@@ -57,7 +111,15 @@ Resources:
       CidrBlock: !Select [1, !Cidr [!Ref VpcCIDR, 4, 4]]
       Tags:
         - Key: Name
-          Value: "SUPR2"
+          Value: "AERONEXGAWSDEVSUPREAST201"
+        - Key: Description
+          Value: "SUPR2 NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   SUPR3:
     Type: AWS::EC2::Subnet
@@ -67,7 +129,15 @@ Resources:
       CidrBlock: !Select [2, !Cidr [!Ref VpcCIDR, 4, 4]]
       Tags:
         - Key: Name
-          Value: "SUPR3"
+          Value: "AERONEXGAWSDEVSUPREAST201"
+        - Key: Description
+          Value: "SUPR3 NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   SUPR4:
     Type: AWS::EC2::Subnet
@@ -77,14 +147,30 @@ Resources:
       CidrBlock: !Select [3, !Cidr [!Ref VpcCIDR, 4, 4]]
       Tags:
         - Key: Name
-          Value: "SUPR4"
+          Value: "AERONEXGAWSDEVSUPREAST201"
+        - Key: Description
+          Value: "SUPR4 NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   EFSFileSystem:
     Type: "AWS::EFS::FileSystem"
     Properties:
       FileSystemTags:
         - Key: Name
-          Value: "MyEFSFileSystem"
+          Value: "AERONEXGAWSDEVEFSEAST201"
+        - Key: Description
+          Value: "EFS NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   EFSMountTarget:
     Type: "AWS::EFS::MountTarget"
@@ -93,6 +179,7 @@ Resources:
       SubnetId: !Ref SUPR3
       SecurityGroups: 
         - !Ref DefaultSecurityGroup
+      
 
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
@@ -103,6 +190,17 @@ Resources:
         - !Ref SUPR2
         - !Ref SUPR3
         - !Ref SUPR4
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVDBSGEAST201"
+        - Key: Description
+          Value: "DBSG NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   AuroraDBCluster:
     Type: AWS::RDS::DBCluster
@@ -111,13 +209,24 @@ Resources:
       MasterUsername: masteruser
       MasterUserPassword: masterpassword
       DBSubnetGroupName: !Ref DBSubnetGroup
-
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVADBCEAST201"
+        - Key: Description
+          Value: "ADBC NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   OpenSearchServiceLinkedRole:
     Type: "AWS::IAM::ServiceLinkedRole"
     Properties:
       AWSServiceName: "es.amazonaws.com"
       Description: "Service linked role for Amazon OpenSearch Service"
+      
 
   ElasticsearchDomain:
     Type: AWS::OpenSearchService::Domain
@@ -139,6 +248,17 @@ Resources:
               AWS: "*"
             Action: "es:*"
             Resource: "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/my-opensearch-nw/*"
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVESDEAST201"
+        - Key: Description
+          Value: "ESD NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
   MyEKSCluster:
     Type: AWS::EKS::Cluster
@@ -150,8 +270,19 @@ Resources:
           - !Ref SUPR1
           - !Ref SUPR3
         SecurityGroupIds:
-          - !GetAtt VPC.DefaultSecurityGroup
-  
+          - !GetAtt DefaultSecurityGroup.GroupId
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVEKSCEAST201"
+        - Key: Description
+          Value: "EKSC NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
+
   EKSRole:
     Type: AWS::IAM::Role
     Properties:
@@ -165,73 +296,142 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
         - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVEKSREAST201"
+        - Key: Description
+          Value: "EKSR NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
 
-  EKSPolicy:
-    Type: AWS::IAM::Policy
+  EmbeddingsBucket:
+    Type: AWS::S3::Bucket
     Properties:
-      PolicyName: EKSPermissions
-      PolicyDocument:
+      BucketName: my-embeddings-bucket # Puedes cambiar el nombre del bucket según tus necesidades
+
+
+  ElasticNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      Description: "Elastic Network Interface for XYZ"
+      SubnetId: !Ref SUPR2
+      GroupSet:
+        - !Ref DefaultSecurityGroup
+      Tags:
+        - Key: Name
+          Value: "AERONEXGAWSDEVENIEAST201"
+        - Key: Description
+          Value: "ENI NextGenCC"
+        - Key: Project
+          Value: "NextGenCC"
+        - Key: Environment
+          Value: "Dev"
+        - Key: Area
+          Value: "Call Center"
+
+  VpcLinkBedrock: 
+    Type: AWS::ApiGatewayV2::VpcLink
+    Properties:
+      Name: VpcLinkBedrock
+      SubnetIds:
+        - !Ref SUPR1
+        - !Ref SUPR2
+        - !Ref SUPR3
+        - !Ref SUPR4
+      SecurityGroupIds:
+        - !GetAtt DefaultSecurityGroup.GroupId  
+  
+  
+
+  BedrockLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: !Ref BedrockLambdaHandler
+      Runtime: !Ref BedrockLambdaRuntime
+      Role: !GetAtt BedrockLambdaRole.Arn  # Reference the IAM role for Lambda execution
+      Code:
+        ZipFile: |
+          def handler(event, context):
+              return "Hola mundo"
+
+  BedrockLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
           - Effect: Allow
-            Action:
-              - eks:DescribeCluster
-              - eks:ListClusters
-              - eks:ListFargateProfiles
-              - eks:ListNodegroups
-            Resource: "*"
-      Roles:
-        - !Ref EKSRole
-
-  RDSPolicy:
-    Type: AWS::IAM::Policy
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+  
+  Cloud9InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
     Properties:
-      PolicyName: RDSPermissions
-      PolicyDocument:
+      Roles:
+        - !Ref Cloud9Role
+
+  Cloud9Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
           - Effect: Allow
-            Action:
-              - rds:CreateDBCluster
-              - rds:CreateDBInstance
-              - rds:DescribeDBClusters
-              - rds:DescribeDBInstances
-            Resource: "*"
-      Roles:
-        - !Ref EKSRole
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: Cloud9Policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:CreateAssociation
+                  - ssm:DeleteAssociation
+                  - ssm:DescribeAssociation
+                  - ssm:UpdateAssociationStatus
+                Resource: '*'
 
-  EFSPolicy:
-    Type: AWS::IAM::Policy
+  Cloud9Instance:
+    Type: AWS::EC2::Instance
     Properties:
-      PolicyName: EFSPermissions
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Action:
-              - elasticfilesystem:CreateFileSystem
-              - elasticfilesystem:CreateMountTarget
-              - elasticfilesystem:DescribeFileSystems
-              - elasticfilesystem:DescribeMountTargets
-            Resource: "*"
-      Roles:
-        - !Ref EKSRole
+      InstanceType: t2.micro
+      ImageId: ami-09e3c47e0b22858cc  # AMI de Amazon Linux 2 (puedes cambiarlo según tus necesidades)
+      IamInstanceProfile: !Ref Cloud9InstanceProfile
+      SubnetId: !Ref SUPR4
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash -xe
+          yum update -y
+          yum install -y docker
+          service docker start
+          usermod -a -G docker ec2-user
+          reboot
+    DependsOn: Cloud9Role
 
-  OpenSearchPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: OpenSearchPermissions
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Action:
-              - es:*
-            Resource: "*"
-      Roles:
-        - !Ref EKSRole
 
 Outputs:
   VpcId:
-    Description: ID de la VPC recién creada
-    Value: !Ref VPC
+    Description: >
+      - VPC: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/${VPC}"
+      - DefaultSecurityGroup: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/${DefaultSecurityGroup}"
+      - SUPR1: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SUPR1}"
+      - SUPR2: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SUPR2}"
+      - SUPR3: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SUPR3}"
+      - SUPR4: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SUPR4}"
+      - EFSFileSystem: !Sub "arn:aws:elasticfilesystem:${AWS::Region}:${AWS::AccountId}:file-system/${EFSFileSystem}"
+      - EFSMountTarget: !Sub "arn:aws:elasticfilesystem:${AWS::Region}:${AWS::AccountId}:mount-target/${EFSMountTarget}"
+      - DBSubnetGroup: !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:subgrp:${DBSubnetGroup}"
+      - AuroraDBCluster: !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${AuroraDBCluster}"
+      - OpenSearchServiceLinkedRole: !Sub "arn:aws:iam::${AWS::AccountId}:role/service-role/${OpenSearchServiceLinkedRole}"
+      - ElasticsearchDomain: !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/my-opensearch-nw"
+      - MyEKSCluster: !Sub "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/${MyEKSCluster}"
+      - EKSRole: !Sub "arn:aws:iam::${AWS::AccountId}:role/${EKSRole}"
+      - EmbeddingsBucket: !Ref EmbeddingsBucket
+    Value: !Ref VPC 

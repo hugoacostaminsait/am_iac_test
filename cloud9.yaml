@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: 
+  AMAWSDEVUE101 
+
+Parameters:
+
+  Cloud9tName:
+    Type: String
+    Description: Nombre del entorno Cloud9
+    Default: AMCloud9
+
+Resources:
+
+  Cloud9InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref Cloud9Role
+
+  Cloud9Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: Cloud9Policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:CreateAssociation
+                  - ssm:DeleteAssociation
+                  - ssm:DescribeAssociation
+                  - ssm:UpdateAssociationStatus
+                Resource: '*'
+
+  Cloud9Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-09e3c47e0b22858cc  # AMI de Amazon Linux 2 (puedes cambiarlo según tus necesidades)
+      IamInstanceProfile: !Ref Cloud9InstanceProfile
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash -xe
+          yum update -y
+          yum install -y docker
+          service docker start
+          usermod -a -G docker ec2-user
+          reboot
+    DependsOn: Cloud9Role
+
